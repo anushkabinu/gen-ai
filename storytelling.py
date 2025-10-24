@@ -16,8 +16,7 @@ if not API_KEY:
     st.stop()
 
 # Initialize Gemini client
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-pro')  # Use gemini-pro instead of flash-lite
+client = genai.Client(api_key=API_KEY)
 
 # -----------------------
 # Streamlit Page Config
@@ -74,12 +73,11 @@ if generate_button:
 
     try:
         # Gemini AI Story Generation
-        response = model.generate_content(prompt)
-        if response.text:
-            story = response.text.strip()
-        else:
-            st.error("Failed to generate story content")
-            st.stop()
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=prompt
+        )
+        story = response.text.strip()
 
         # Generate Audio using gTTS (Multilingual)
         tts = gTTS(story, lang=lang_map.get(language, "en"))
